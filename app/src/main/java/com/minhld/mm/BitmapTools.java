@@ -8,7 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created by minhld on 11/23/2015.
+ * Created by minhld on 01/28/2016.
  */
 public class BitmapTools {
     public static byte[] getBytesFromBitmap(Bitmap bmp) {
