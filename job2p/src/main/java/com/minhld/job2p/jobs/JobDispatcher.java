@@ -55,7 +55,7 @@ public class JobDispatcher extends AsyncTask {
 
                 for (int i = 0; i < deviceNum; i++) {
                     // create job data
-                    splitObject = dataParser.getSinglePart(orgObj, deviceNum, i);
+                    splitObject = dataParser.getSinglePart(orgObj, deviceNum, i);//Bitmap.createBitmap(orgBmp, (pieceWidth * i), 0, pieceWidth, orgBmp.getHeight());
                     byte[] objectBytes = dataParser.parseObjectToBytes(splitObject);
                     jobData = new JobData(i, objectBytes, new File(jobPath));
 
@@ -65,10 +65,16 @@ public class JobDispatcher extends AsyncTask {
                     // and send to all the clients
                     // however it will skip the client 0, server will handle this
                     if (this.useCluster) {
-                        // dispatch this one to client to resolve it
-                        // it should be 32288 bytes to be sent
-                        byte[] jobBytes = jobData.toByteArray();
-                        this.broadcaster.sendObject(jobBytes, i);
+                        if (i == 0) {
+                            // do it at server
+                            this.socketHandler.obtainMessage(Utils.MESSAGE_INFO, "[server] do own job #" + i);
+                            new Thread(new JobExecutor(this.context, this.socketHandler, dataParser, jobData)).start();
+                        } else {
+                            // dispatch this one to client to resolve it
+                            // it should be 32288 bytes to be sent
+                            byte[] jobBytes = jobData.toByteArray();
+                            this.broadcaster.sendObject(jobBytes, i);
+                        }
                     } else {
                         // do all of the tasks at server
                         this.socketHandler.obtainMessage(Utils.MESSAGE_INFO, "[server] do own job #" + i).sendToTarget();
