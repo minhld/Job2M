@@ -1,6 +1,7 @@
 package com.minhld.mm;
 
 import android.graphics.Bitmap;
+import android.net.wifi.p2p.WifiP2pDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +19,10 @@ import android.widget.ViewFlipper;
 import com.minhld.job2p.jobs.JobDataParser;
 import com.minhld.job2p.jobs.JobHandler;
 import com.minhld.job2p.supports.Utils;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -54,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     Bitmap finalBitmap = null;
 
     JobHandler jobHandler;
+
+    WifiPeerListAdapter deviceListAdapter;
+    List<WifiP2pDevice> peerArrayList = new ArrayList<>();
 
     Handler mainUiHandler = new Handler() {
         @Override
@@ -111,9 +119,16 @@ public class MainActivity extends AppCompatActivity {
                 });
 
             }
+
+            @Override
+            public void peerListUpdated(Collection<WifiP2pDevice> deviceList) {
+                deviceListAdapter.clear();
+                deviceListAdapter.addAll(deviceList);
+                deviceListAdapter.notifyDataSetChanged();
+            }
         });
 
-        deviceList.setAdapter(jobHandler.getDeviceListAdapter());
+        deviceList.setAdapter(deviceListAdapter);
 
         sayHiBtn.setOnClickListener(new View.OnClickListener() {
             @Override

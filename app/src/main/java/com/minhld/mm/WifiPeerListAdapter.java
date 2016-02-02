@@ -1,7 +1,7 @@
-package com.minhld.job2p.supports;
+package com.minhld.mm;
 
 /**
- * Created by minhld on 9/17/2015.
+ * Created by minhld on 01/28/2016
  */
 
 import android.content.Context;
@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.minhld.job2p.R;
+import com.minhld.job2p.supports.WifiBroadcaster;
 
 import java.util.List;
 
@@ -81,15 +82,6 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                     break;
                 }
                 case WifiP2pDevice.CONNECTED: {
-                    /*
-                    Utils.showYesNo(context, "are you sure you want to disconnect with " + device.deviceName + "?",
-                            new Utils.ConfirmListener() {
-                                @Override
-                                public void confirmed() {
-                                    mWifiBroadcaster.disconnect(device.deviceName, null);
-                                }
-                            });
-                    */
                     // just disconnect, no confirmation
                     mWifiBroadcaster.disconnect(device.deviceName, null);
                     break;

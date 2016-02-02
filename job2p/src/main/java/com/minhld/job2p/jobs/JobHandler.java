@@ -5,10 +5,8 @@ import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.os.Handler;
 
-import com.minhld.job2p.R;
 import com.minhld.job2p.supports.Utils;
 import com.minhld.job2p.supports.WifiBroadcaster;
-import com.minhld.job2p.supports.WifiPeerListAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +28,8 @@ public class JobHandler {
     WifiBroadcaster mReceiver;
     IntentFilter mIntentFilter;
 
-    WifiPeerListAdapter deviceListAdapter;
-    List<WifiP2pDevice> peerArrayList = new ArrayList<>();
+//    WifiPeerListAdapter deviceListAdapter;
+//    List<WifiP2pDevice> peerArrayList = new ArrayList<>();
 
     JobSocketListener jobSocketListener;
     public void setSocketListener(JobSocketListener jobSocketListener) {
@@ -55,8 +53,8 @@ public class JobHandler {
 
         discoverPeers();
 
-        // configure the device list
-        deviceListAdapter = new WifiPeerListAdapter(this.context, R.layout.row_devices, peerArrayList, mReceiver);
+//        // configure the device list
+//        deviceListAdapter = new WifiPeerListAdapter(this.context, R.layout.row_devices, peerArrayList, mReceiver);
 
     }
 
@@ -97,9 +95,9 @@ public class JobHandler {
         }
     }
 
-    public WifiPeerListAdapter getDeviceListAdapter() {
-        return deviceListAdapter;
-    }
+//    public WifiPeerListAdapter getDeviceListAdapter() {
+//        return deviceListAdapter;
+//    }
 
     /**
      * this class handles the device list when it is updated
@@ -107,9 +105,7 @@ public class JobHandler {
     private class BroadcastUpdatesHandler implements WifiBroadcaster.BroadCastListener {
         @Override
         public void peerDeviceListUpdated(Collection<WifiP2pDevice> deviceList) {
-            deviceListAdapter.clear();
-            deviceListAdapter.addAll(deviceList);
-            deviceListAdapter.notifyDataSetChanged();
+            jobSocketListener.peerListUpdated(deviceList);
         }
 
         @Override
@@ -122,5 +118,6 @@ public class JobHandler {
 
     public interface JobSocketListener {
         public void socketUpdated(boolean isServer, boolean isConnected);
+        public void peerListUpdated(Collection<WifiP2pDevice> deviceList);
     }
 }
