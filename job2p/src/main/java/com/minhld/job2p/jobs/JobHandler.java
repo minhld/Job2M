@@ -8,14 +8,13 @@ import android.os.Handler;
 import com.minhld.job2p.supports.Utils;
 import com.minhld.job2p.supports.WifiBroadcaster;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
- * this class handles
+ * this class handles everything regarding job executions and handlers
  *
- * Created by minhd on 11/23/2015.
+ * Created by minhld on 11/23/2015.
+ * Have been updated on 02/02/2016
  */
 public class JobHandler {
     Activity context;
@@ -27,9 +26,6 @@ public class JobHandler {
 
     WifiBroadcaster mReceiver;
     IntentFilter mIntentFilter;
-
-//    WifiPeerListAdapter deviceListAdapter;
-//    List<WifiP2pDevice> peerArrayList = new ArrayList<>();
 
     JobSocketListener jobSocketListener;
     public void setSocketListener(JobSocketListener jobSocketListener) {
@@ -53,8 +49,7 @@ public class JobHandler {
 
         discoverPeers();
 
-//        // configure the device list
-//        deviceListAdapter = new WifiPeerListAdapter(this.context, R.layout.row_devices, peerArrayList, mReceiver);
+        // configure the device list
 
     }
 
@@ -95,10 +90,6 @@ public class JobHandler {
         }
     }
 
-//    public WifiPeerListAdapter getDeviceListAdapter() {
-//        return deviceListAdapter;
-//    }
-
     /**
      * this class handles the device list when it is updated
      */
@@ -116,8 +107,21 @@ public class JobHandler {
         }
     }
 
+    /**
+     * listener - for updates from socket and peer list
+     */
     public interface JobSocketListener {
+        /**
+         * when socket status is updated
+         * @param isServer
+         * @param isConnected
+         */
         public void socketUpdated(boolean isServer, boolean isConnected);
+
+        /**
+         * when peer list is updated
+         * @param deviceList
+         */
         public void peerListUpdated(Collection<WifiP2pDevice> deviceList);
     }
 }

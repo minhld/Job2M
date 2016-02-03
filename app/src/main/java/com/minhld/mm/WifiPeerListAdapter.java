@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.minhld.job2p.R;
-import com.minhld.job2p.supports.WifiBroadcaster;
+import com.minhld.mm.R;
+// import com.minhld.job2p.supports.WifiBroadcaster;
 
 import java.util.List;
 
@@ -23,22 +23,27 @@ import java.util.List;
 public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
     private Context context;
     private List<WifiP2pDevice> items;
-    private WifiBroadcaster mWifiBroadcaster;
+    //private WifiBroadcaster mWifiBroadcaster;
 
     /**
      * @param context
      * @param textViewResourceId
-     * @param objects
+//     * @param objects
      */
-    public WifiPeerListAdapter(Context context, int textViewResourceId,
-                               List<WifiP2pDevice> objects,
-                               WifiBroadcaster mWifiBroadcaster) {
-        super(context, textViewResourceId, objects);
+    public WifiPeerListAdapter(Context context, int textViewResourceId
+                               /* ,List<WifiP2pDevice> objects
+                               ,WifiBroadcaster mWifiBroadcaster */) {
+        super(context, textViewResourceId/*, objects*/);
 
         this.context = context;
-        this.items = objects;
-        this.mWifiBroadcaster = mWifiBroadcaster;
+        //this.items = objects;
+        //this.mWifiBroadcaster = mWifiBroadcaster;
     }
+
+//    @Override
+//    public WifiP2pDevice getItem(int position) {
+//        return super.getItem(position);
+//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -48,7 +53,7 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                     Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.row_devices, null);
         }
-        WifiP2pDevice device = items.get(position);
+        WifiP2pDevice device = this.getItem(position);
         if (device != null) {
             TextView top = (TextView) v.findViewById(R.id.device_name);
             TextView bottom = (TextView) v.findViewById(R.id.device_details);
@@ -83,11 +88,11 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                 }
                 case WifiP2pDevice.CONNECTED: {
                     // just disconnect, no confirmation
-                    mWifiBroadcaster.disconnect(device.deviceName, null);
+                    //mWifiBroadcaster.disconnect(device.deviceName, null);
                     break;
                 }
                 case WifiP2pDevice.AVAILABLE: {
-                    mWifiBroadcaster.connectToADevice(device, null);
+                    //mWifiBroadcaster.connectToADevice(device, null);
                     break;
                 }
                 case WifiP2pDevice.UNAVAILABLE: {
@@ -96,7 +101,7 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                 }
                 case WifiP2pDevice.FAILED: {
                     // attempting to connect
-                    mWifiBroadcaster.connectToADevice(device, null);
+                    //mWifiBroadcaster.connectToADevice(device, null);
                     break;
                 }
             }

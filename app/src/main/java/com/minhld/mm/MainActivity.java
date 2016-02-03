@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
     JobHandler jobHandler;
 
     WifiPeerListAdapter deviceListAdapter;
-    List<WifiP2pDevice> peerArrayList = new ArrayList<>();
 
     Handler mainUiHandler = new Handler() {
         @Override
@@ -128,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        deviceListAdapter = new WifiPeerListAdapter(this, R.layout.row_devices);
         deviceList.setAdapter(deviceListAdapter);
 
         sayHiBtn.setOnClickListener(new View.OnClickListener() {
