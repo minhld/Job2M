@@ -3,6 +3,9 @@ package com.minhld.job2p.supports;
 import android.content.Context;
 import android.os.Environment;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -16,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dalvik.system.DexClassLoader;
 
@@ -61,6 +65,8 @@ public class Utils {
             this.name = name;
         }
     }
+
+    public static HashMap<String, String> configs = null;
 
     /**
      * list of connected client devices that currently connect to current server<br>
@@ -151,6 +157,44 @@ public class Utils {
             bos.write(buff, 0, read);
         }
         return bos.toByteArray();
+    }
+
+    /**
+     * get predefined app configuration when it is loading
+     * @return
+     */
+    public static HashMap<String, String> getConfigs(Context c) {
+        try {
+            XmlPullParser xmlParser = XmlPullParserFactory.newInstance().newPullParser();
+            xmlParser.setInput(c.getAssets().open("config.xml"), "utf-8");
+
+            int eventType = xmlParser.getEventType();
+            String tagName = "", tagText = "";
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                tagName = xmlParser.getName();
+                switch (eventType) {
+                    case XmlPullParser.TEXT:
+                        tagText = xmlParser.getText();
+                        break;
+
+                    case XmlPullParser.END_TAG:
+                        if (tagName.equalsIgnoreCase("role")) {
+                            configs.put(tagName, tagText);
+                        } else if (tagName.equalsIgnoreCase("availability-threshold")) {
+                            configs.put(tagName, tagText);
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+                eventType = xmlParser.next();
+            }
+        } catch (Exception e) {
+            // leave it here
+            e.printStackTrace();
+        }
+        return configs;
     }
 
     public static byte[] intToBytes(int val) {

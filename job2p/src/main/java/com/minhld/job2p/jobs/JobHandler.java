@@ -9,6 +9,7 @@ import com.minhld.job2p.supports.Utils;
 import com.minhld.job2p.supports.WifiBroadcaster;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * this class handles everything regarding job executions and handlers
@@ -27,6 +28,8 @@ public class JobHandler {
     WifiBroadcaster mReceiver;
     IntentFilter mIntentFilter;
 
+
+
     JobSocketListener jobSocketListener;
     public void setSocketListener(JobSocketListener jobSocketListener) {
         this.jobSocketListener = jobSocketListener;
@@ -36,6 +39,10 @@ public class JobHandler {
         this.context = c;
         this.uiHandler = uiHandler;
         this.dataParser = dataParser;
+
+        // load the configuration, the configuration will be saved in Utils
+        // object which is a singleton to use between the layers
+        Utils.getConfigs(c);
 
         clientHandler = new JobClientHandler(uiHandler, dataParser);
         serverHandler = new JobServerHandler(this.context, uiHandler, clientHandler, dataParser);
@@ -49,7 +56,7 @@ public class JobHandler {
 
         discoverPeers();
 
-        // configure the device list
+
 
     }
 
