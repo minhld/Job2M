@@ -42,7 +42,7 @@ public class JobHandler {
 
         // load the configuration, the configuration will be saved in Utils
         // object which is a singleton to use between the layers
-        Utils.getConfigs(c);
+        Utils.readConfigs(c);
 
         clientHandler = new JobClientHandler(uiHandler, dataParser);
         serverHandler = new JobServerHandler(this.context, uiHandler, clientHandler, dataParser);
@@ -104,6 +104,19 @@ public class JobHandler {
         @Override
         public void peerDeviceListUpdated(Collection<WifiP2pDevice> deviceList) {
             jobSocketListener.peerListUpdated(deviceList);
+
+            // check if it is server, it won't connect but only listening
+            if (Utils.getConfig("role").equals("server")) {
+                return;
+            }
+
+            // if current device is client, it will auto connect through
+            // the list of devices
+            for (WifiP2pDevice device : deviceList) {
+                if (device.status == Utils.WiFiDirectStatus.AVAILABLE) {
+                    mReceiver.connectToADevice(device, null);
+                }
+            }
         }
 
         @Override

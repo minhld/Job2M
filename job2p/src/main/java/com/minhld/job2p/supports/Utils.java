@@ -40,6 +40,14 @@ public class Utils {
     public static final int JOB_OK = 0x500 + 2;
     public static final int JOB_FAILED = -1;
 
+    public static class WiFiDirectStatus {
+        public static final int AVAILABLE = 3;
+        public static final int CONNECTED = 0;
+        public static final int FAILED = 2;
+        public static final int INVITED = 1;
+        public static final int UNAVAILABLE = 4;
+    }
+
     public static final int MAIN_JOB_DONE = 1;
     public static final int MAIN_INFO = -1;
 
@@ -66,7 +74,7 @@ public class Utils {
         }
     }
 
-    public static HashMap<String, String> configs = null;
+    public static HashMap<String, String> configs = new HashMap<>();
 
     /**
      * list of connected client devices that currently connect to current server<br>
@@ -159,11 +167,15 @@ public class Utils {
         return bos.toByteArray();
     }
 
+    public static String getConfig(String keyConfig) {
+        return Utils.configs.get(keyConfig);
+    }
+
     /**
      * get predefined app configuration when it is loading
      * @return
      */
-    public static HashMap<String, String> getConfigs(Context c) {
+    public static HashMap<String, String> readConfigs(Context c) {
         try {
             XmlPullParser xmlParser = XmlPullParserFactory.newInstance().newPullParser();
             xmlParser.setInput(c.getAssets().open("config.xml"), "utf-8");
