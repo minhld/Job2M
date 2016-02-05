@@ -1,46 +1,109 @@
 package com.minhld.job2p.supports;
 
-import java.io.BufferedReader;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 
 /**
  * Created by minhld on 12/7/2015.
  */
 public class PeerSpecs {
-    public float cpuTotal;
-    public float cpuCoreSpeed;
+    public float cpuSpeed;
     public int cpuCoreNum;
     public float cpuUsage;
 
     public int memTotal;
     public float memUsage;
 
-    public int batTotal;
+    public float batTotal;
     public float batUsage;
+
+    public String availability;
+    public float RL;
 
     /**
      * get current specs of the device
      * @return
      */
-    public static PeerSpecs getMySpecs() {
+    public static PeerSpecs getMySpecs(Context c) {
         PeerSpecs ps = new PeerSpecs();
 
         // cpu
-        ps.cpuTotal = getCpuTotal();
+        ps.cpuSpeed = getCpuTotal();
+        ps.cpuCoreNum = 1;
         ps.cpuUsage = readUsage();
 
         // memory
-        float[] mems = readMem();
+        float[] mems = readMem2(c);
         ps.memTotal = (int) mems[0];
         ps.memUsage = mems[1];
 
         // battery
+        ps.batTotal = getBatteryCapacity(c);
+        ps.batUsage = getBatteryUsage(c);
 
+        String availThresStr = Utils.getConfig("availability-threshold");
+        float availThres = Float.parseFloat(availThresStr);
+
+        ps.availability = ps.batUsage > availThres ? "on" : "off";
+        ps.RL = (ps.cpuSpeed * ps.cpuCoreNum / ps.cpuUsage) +
+                (ps.memTotal / ps.memUsage) +
+                (ps.batTotal / (ps.batUsage * 1000));
 
         return ps;
+    }
+
+    public static float getBatteryCapacity(Context c) {
+        Object mPowerProfile_ = null;
+
+        final String POWER_PROFILE_CLASS = "com.android.internal.os.PowerProfile";
+
+        try {
+            mPowerProfile_ = Class.forName(POWER_PROFILE_CLASS).
+                            getConstructor(Context.class).newInstance(c);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            double batteryCapacity = (Double) Class
+                    .forName(POWER_PROFILE_CLASS)
+                    .getMethod("getAveragePower", java.lang.String.class)
+                    .invoke(mPowerProfile_, "battery.capacity");
+            return (float) batteryCapacity;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public static float getBatteryUsage(Context c) {
+        Intent batteryIntent = c.registerReceiver(null,
+                            new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        if(level == -1 || scale == -1) {
+            return 50.0f;
+        }
+
+        return ((float)level / (float)scale) * 100.0f;
+    }
+
+    public static float[] readMem2(Context c) {
+        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+        ActivityManager activityManager = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);
+        activityManager.getMemoryInfo(memInfo);
+
+        long availableMegs = memInfo.availMem / 1048576L;
+        float memTotal = (float) memInfo.totalMem / 1048576f;
+        float memUsage = (memTotal - availableMegs) / memTotal;
+        return new float[] { memTotal, memUsage };
     }
 
     public static float[] readMem() {
