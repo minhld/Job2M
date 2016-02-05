@@ -1,65 +1,90 @@
 package com.minhld.job2p.supports;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 
 /**
  * Created by minhld on 12/7/2015.
  */
 public class PeerSpecs {
-    public long totalCPU;
-    public long availableCPU;
-    public long totalMemory;
-    public long availableMemory;
-    public long point;
+    public float cpuTotal;
+    public float cpuCoreSpeed;
+    public int cpuCoreNum;
+    public float cpuUsage;
 
+    public int memTotal;
+    public float memUsage;
+
+    public int batTotal;
+    public float batUsage;
+
+    /**
+     * get current specs of the device
+     * @return
+     */
     public static PeerSpecs getMySpecs() {
-        return null;
+        PeerSpecs ps = new PeerSpecs();
+
+        // cpu
+        ps.cpuTotal = getCpuTotal();
+        ps.cpuUsage = readUsage();
+
+        // memory
+        float[] mems = readMem();
+        ps.memTotal = (int) mems[0];
+        ps.memUsage = mems[1];
+
+        // battery
+
+
+        return ps;
     }
 
-    public static String readMem() {
-
+    public static float[] readMem() {
         RandomAccessFile reader;
         String line = "";
         float memTotal = 0, memFree = 0, memUsage = 0;
         try {
             reader = new RandomAccessFile("/proc/meminfo", "r");
-            String[] segs = null;
             while ((line = reader.readLine()) != null) {
                 line = line.toLowerCase();
                 if (line.contains("memtotal:")) {
                     line = line.replaceAll("memtotal:", "").
                             replaceAll("kb","").trim();
-                    segs = line.trim().split(" ");
                     memTotal = Float.parseFloat(line) / (float)(1024 * 1024);
                 }
                 if (line.contains("memfree:")) {
                     line = line.replaceAll("memfree:", "").
                             replaceAll("kb", "").trim();
-
                     memFree = Float.parseFloat(line) / (float)(1024 * 1024);
                     memUsage = (memTotal - memFree) / memTotal;
                 }
             }
-            return "mem-total: " + memTotal + ", mem-usage: " + memUsage;
+            reader.close();
+            return new float[] { memTotal, memUsage };
         } catch (IOException e) {
-            return "";
+            return new float[2];
         }
 
     }
 
-    private static String getCPU() {
+    public static float getCpuTotal() {
+        RandomAccessFile reader;
+        String line = "";
+        StringBuffer buffer = new StringBuffer();
+        float cpuTotal = 0;
         try {
-            RandomAccessFile reader = new RandomAccessFile("/proc/cpuinfo", "r");
-            String load = "";
-            StringBuffer buff = new StringBuffer();
-            while ((load = reader.readLine()) != null) {
-                buff.append(load + "\n");
+            reader = new RandomAccessFile("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq", "r");
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line.toLowerCase());
             }
-
-            return "";//buff.toString();
-        } catch (Exception e) {
-            return "";
+            reader.close();
+            return Float.parseFloat(buffer.toString()) / 1000000f;
+        } catch (IOException e) {
+            return 0;
         }
     }
 
