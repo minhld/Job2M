@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 
+import com.minhld.job2p.supports.PeerSpecs;
 import com.minhld.job2p.supports.Utils;
 
 import java.io.ByteArrayOutputStream;
@@ -33,11 +34,18 @@ public class JobServerHandler extends Handler {
                 // client received job, will send the result here
                 ByteArrayOutputStream readBuf = (ByteArrayOutputStream) msg.obj;
 
-                // print out that it received a job from server
-                this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] received a job from server. running... ").sendToTarget();
+                // check if the message is ACK
+                if (readBuf.size() == Utils.MSG_ACK.length()) {
+                    // get specs
+                    String specsJSON = PeerSpecs.getMyJSONSpecs(this.parent);
+                    this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] ACK request received. answer now ").sendToTarget();
+                } else {
+                    // print out that it received a job from server
+                    this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] received a job from server. running... ").sendToTarget();
 
-                // run the job, result will be thrown to client executor handler
-                new Thread(new JobExecutor(parent, clientHandler, dataParser, readBuf)).start();
+                    // run the job, result will be thrown to client executor handler
+                    new Thread(new JobExecutor(parent, clientHandler, dataParser, readBuf)).start();
+                }
                 break;
             }
             case Utils.MESSAGE_READ_SERVER: {

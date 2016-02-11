@@ -22,17 +22,24 @@ public class JobData implements Serializable {
         this.jobClass = new byte[0];
     }
 
+    /**
+     * this constructor is used
+     *
+     * @param index
+     * @param bmpData
+     * @param jobClassBytes
+     */
     public JobData(int index, byte[] bmpData, byte[] jobClassBytes) {
         this.index = index;
         this.byteData = bmpData;
         this.jobClass = jobClassBytes;
     }
 
-    public JobData(int index, byte[] bmpData, File jobClassFile) {
+    public JobData(int index, byte[] byteData, File jobClassFile) {
         this.index = index;
 
         // assign the binary data
-        this.byteData = bmpData;
+        this.byteData = byteData;
 
         // assign the job details data
         try {

@@ -56,6 +56,7 @@ public class Utils {
     public static final String JOB_CLASS_NAME = "com.minhld.jobs.Job";
     public static final String JOB_EXEC_METHOD = "exec";
 
+    public static final String MSG_ACK = "ACK";
 
     public enum SocketType {
         SERVER,
