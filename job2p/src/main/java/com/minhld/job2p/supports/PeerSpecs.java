@@ -26,6 +26,13 @@ public class PeerSpecs {
     public String availability;
     public float RL;
 
+    public static String getMyJSONSpecs(Context c) {
+        String specJSON = "";
+        PeerSpecs ps = getMySpecs(c);
+
+        return specJSON;
+    }
+
     /**
      * get current specs of the device
      * @return
@@ -47,6 +54,7 @@ public class PeerSpecs {
         ps.batTotal = getBatteryCapacity(c);
         ps.batUsage = getBatteryUsage(c);
 
+        // get available threshold
         String availThresStr = Utils.getConfig("availability-threshold");
         float availThres = Float.parseFloat(availThresStr);
 
