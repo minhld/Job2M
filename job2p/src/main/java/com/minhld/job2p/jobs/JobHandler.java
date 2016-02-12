@@ -5,6 +5,7 @@ import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.os.Handler;
 
+import com.minhld.job2p.supports.ACKExchanger;
 import com.minhld.job2p.supports.Utils;
 import com.minhld.job2p.supports.WifiBroadcaster;
 
@@ -75,8 +76,14 @@ public class JobHandler {
      * @param useCluster
      */
     public void dispatchJob(boolean useCluster, String dataPath, String jobPath) {
-        new JobDispatcher(context, mReceiver, serverHandler, dataParser,
-                useCluster, dataPath, jobPath).execute();
+        // exchange ACKs between the devices to get device status to support
+        // decision maker to select available peers
+        ACKExchanger exchanger = new ACKExchanger(this.mReceiver, this.serverHandler);
+        exchanger.execute();
+
+        // start dispatching jobs after decision maker select the available peers
+        //new JobDispatcher(context, mReceiver, serverHandler, dataParser,
+        //  useCluster, dataPath, jobPath).execute();
     }
 
     /**

@@ -31,15 +31,25 @@ public class JobServerHandler extends Handler {
     public void handleMessage(Message msg) {
         switch (msg.what) {
             case Utils.MESSAGE_READ_CLIENT: {
-                // client received job, will send the result here
+                // client received job or ACK, will send the result here
                 ByteArrayOutputStream readBuf = (ByteArrayOutputStream) msg.obj;
 
                 // check if the message is ACK
-                if (readBuf.size() == Utils.MSG_ACK.length()) {
+                if (readBuf.size() < Utils.MAX_ACK_SIZE) {
                     // get specs
-                    String specsJSON = PeerSpecs.getMyJSONSpecs(this.parent);
+                    JobData ackJobData = Utils.convert2JobData(readBuf.toByteArray());
+
+                    // get specification info
+                    String specsJSON = PeerSpecs.getMyJSONSpecs(this.parent, ackJobData.index);
+
+                    // makeup ACK with index and return
+                    this.clientHandler.getBroadcaster().sendObject(
+                            new JobData(ackJobData.index, specsJSON.getBytes(), new byte[0]), ackJobData.index);
+
+                    // send message out
                     this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] ACK request received. answer now ").sendToTarget();
                 } else {
+                    // if message is job request
                     // print out that it received a job from server
                     this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] received a job from server. running... ").sendToTarget();
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Handler;
 
+import com.minhld.job2p.supports.ACKExchanger;
 import com.minhld.job2p.supports.Utils;
 import com.minhld.job2p.supports.WifiBroadcaster;
 

@@ -3,6 +3,8 @@ package com.minhld.job2p.supports;
 import android.content.Context;
 import android.os.Environment;
 
+import com.minhld.job2p.jobs.JobData;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -57,6 +59,7 @@ public class Utils {
     public static final String JOB_EXEC_METHOD = "exec";
 
     public static final String MSG_ACK = "ACK";
+    public static final int MAX_ACK_SIZE = 1024;
 
     public enum SocketType {
         SERVER,
@@ -82,6 +85,20 @@ public class Utils {
      * this list will be used as iterating devices for sending, checking, etc...
      */
     public static ArrayList<XDevice> connectedDevices = new ArrayList<>();
+
+    /**
+     * this function converts a binary array into an instance of JobData,
+     * or return null if there is any problem
+     * @param jobData
+     * @return
+     */
+    public static JobData convert2JobData(byte[] jobData) {
+        try {
+            return (JobData) Utils.deserialize(jobData);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /**
      * Serialize an object to binary array

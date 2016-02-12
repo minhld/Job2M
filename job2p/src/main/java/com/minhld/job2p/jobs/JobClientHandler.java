@@ -23,6 +23,10 @@ public class JobClientHandler extends Handler {
         this.mReceiver = mReceiver;
     }
 
+    public WifiBroadcaster getBroadcaster() {
+        return this.mReceiver;
+    }
+
     @Override
     public void handleMessage(Message msg) {
         switch (msg.what) {

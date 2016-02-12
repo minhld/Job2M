@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -26,11 +28,38 @@ public class PeerSpecs {
     public String availability;
     public float RL;
 
-    public static String getMyJSONSpecs(Context c) {
-        String specJSON = "";
+    public static String getMyJSONSpecs(Context c, int index) {
         PeerSpecs ps = getMySpecs(c);
+        JSONObject jsonSpecs = new JSONObject();
+        try {
+            // general information
+            jsonSpecs.put("device", index);
+            jsonSpecs.put("RL", ps.RL);
+            jsonSpecs.put("availability", ps.availability);
+            jsonSpecs.put("network", "on");
+            jsonSpecs.put("gps", "off");
 
-        return specJSON;
+            // specific data
+            JSONObject jsonCPU = new JSONObject();
+            jsonCPU.put("usage", ps.cpuUsage);
+            jsonCPU.put("speed", ps.cpuSpeed);
+            jsonCPU.put("cores", ps.cpuCoreNum);
+            jsonSpecs.put("cpu", jsonCPU);
+
+            JSONObject jsonMem = new JSONObject();
+            jsonMem.put("usage", ps.memUsage);
+            jsonMem.put("total", ps.memTotal);
+            jsonSpecs.put("memory", jsonMem);
+
+            JSONObject jsonBattery = new JSONObject();
+            jsonBattery.put("usage", ps.batUsage);
+            jsonBattery.put("total", ps.batTotal);
+            jsonSpecs.put("battery", jsonBattery);
+
+            return jsonSpecs.toString();
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     /**
@@ -125,12 +154,12 @@ public class PeerSpecs {
                 if (line.contains("memtotal:")) {
                     line = line.replaceAll("memtotal:", "").
                             replaceAll("kb","").trim();
-                    memTotal = Float.parseFloat(line) / (float)(1024 * 1024);
+                    memTotal = Float.parseFloat(line) / 1048576L;
                 }
                 if (line.contains("memfree:")) {
                     line = line.replaceAll("memfree:", "").
                             replaceAll("kb", "").trim();
-                    memFree = Float.parseFloat(line) / (float)(1024 * 1024);
+                    memFree = Float.parseFloat(line) / 1048576L;
                     memUsage = (memTotal - memFree) / memTotal;
                 }
             }
@@ -153,7 +182,7 @@ public class PeerSpecs {
                 buffer.append(line.toLowerCase());
             }
             reader.close();
-            return Float.parseFloat(buffer.toString()) / 1000000f;
+            return Float.parseFloat(buffer.toString()) / 1048576L;
         } catch (IOException e) {
             return 0;
         }
