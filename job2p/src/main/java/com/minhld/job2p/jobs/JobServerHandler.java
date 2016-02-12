@@ -44,7 +44,8 @@ public class JobServerHandler extends Handler {
 
                     // makeup ACK with index and return
                     this.clientHandler.getBroadcaster().sendObject(
-                            new JobData(ackJobData.index, specsJSON.getBytes(), new byte[0]), ackJobData.index);
+                            new JobData(ackJobData.index, specsJSON.getBytes(), new byte[0]).toByteArray(),
+                            ackJobData.index);
 
                     // send message out
                     this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] ACK received. answer now").sendToTarget();
