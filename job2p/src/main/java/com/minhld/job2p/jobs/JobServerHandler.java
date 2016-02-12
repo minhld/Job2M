@@ -47,11 +47,11 @@ public class JobServerHandler extends Handler {
                             new JobData(ackJobData.index, specsJSON.getBytes(), new byte[0]), ackJobData.index);
 
                     // send message out
-                    this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] ACK request received. answer now ").sendToTarget();
+                    this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] ACK received. answer now").sendToTarget();
                 } else {
                     // if message is job request
                     // print out that it received a job from server
-                    this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] received a job from server. running... ").sendToTarget();
+                    this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] received a job from server. executing...").sendToTarget();
 
                     // run the job, result will be thrown to client executor handler
                     new Thread(new JobExecutor(parent, clientHandler, dataParser, readBuf)).start();

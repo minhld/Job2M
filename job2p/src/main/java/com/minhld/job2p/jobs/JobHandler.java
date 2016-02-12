@@ -57,8 +57,6 @@ public class JobHandler {
 
         discoverPeers();
 
-
-
     }
 
     /**
@@ -81,9 +79,13 @@ public class JobHandler {
         ACKExchanger exchanger = new ACKExchanger(this.mReceiver, this.serverHandler);
         exchanger.execute();
 
+        try {
+            Thread.sleep(500);
+        } catch(Exception e) { }
+
         // start dispatching jobs after decision maker select the available peers
-        //new JobDispatcher(context, mReceiver, serverHandler, dataParser,
-        //  useCluster, dataPath, jobPath).execute();
+        new JobDispatcher(context, mReceiver, serverHandler, dataParser,
+                                useCluster, dataPath, jobPath).execute();
     }
 
     /**

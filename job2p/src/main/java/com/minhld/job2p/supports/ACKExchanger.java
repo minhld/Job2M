@@ -4,9 +4,6 @@ import android.os.AsyncTask;
 import android.os.Handler;
 
 import com.minhld.job2p.jobs.JobData;
-import com.minhld.job2p.jobs.JobExecutor;
-
-import java.io.File;
 
 /**
  * the ACK exchanger supports sending ACK back and forth between the peers
