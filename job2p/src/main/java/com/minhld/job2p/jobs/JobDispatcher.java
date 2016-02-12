@@ -41,7 +41,7 @@ public class JobDispatcher extends AsyncTask {
 
         if (new File(dataPath).exists()) {
             try {
-                // read the bitmap from the binary data
+                // read data from the binary data
                 orgObj = dataParser.readFile(dataPath);
 
                 objJsonMetadata = dataParser.getJsonMetadata(orgObj);
