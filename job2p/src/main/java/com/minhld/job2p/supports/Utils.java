@@ -42,6 +42,9 @@ public class Utils {
     public static final int JOB_OK = 0x500 + 2;
     public static final int JOB_FAILED = -1;
 
+    public static final byte JOB_TYPE_ACK = 50;
+    public static final byte JOB_TYPE_ORG = 1;
+
     public static class WiFiDirectStatus {
         public static final int AVAILABLE = 3;
         public static final int CONNECTED = 0;

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.minhld.job2p.supports.WifiBroadcaster;
 import com.minhld.mm.R;
 // import com.minhld.job2p.supports.WifiBroadcaster;
 
@@ -23,21 +24,20 @@ import java.util.List;
 public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
     private Context context;
     private List<WifiP2pDevice> items;
-    //private WifiBroadcaster mWifiBroadcaster;
+    private WifiBroadcaster mWifiBroadcaster;
 
     /**
      * @param context
      * @param textViewResourceId
-//     * @param objects
      */
     public WifiPeerListAdapter(Context context, int textViewResourceId
-                               /* ,List<WifiP2pDevice> objects
-                               ,WifiBroadcaster mWifiBroadcaster */) {
+                               /* ,List<WifiP2pDevice> objects*/
+                               ,WifiBroadcaster mWifiBroadcaster) {
         super(context, textViewResourceId/*, objects*/);
 
         this.context = context;
         //this.items = objects;
-        //this.mWifiBroadcaster = mWifiBroadcaster;
+        this.mWifiBroadcaster = mWifiBroadcaster;
     }
 
 //    @Override
@@ -88,11 +88,11 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                 }
                 case WifiP2pDevice.CONNECTED: {
                     // just disconnect, no confirmation
-                    //mWifiBroadcaster.disconnect(device.deviceName, null);
+                    mWifiBroadcaster.disconnect(device.deviceName, null);
                     break;
                 }
                 case WifiP2pDevice.AVAILABLE: {
-                    //mWifiBroadcaster.connectToADevice(device, null);
+                    mWifiBroadcaster.connectToADevice(device, null);
                     break;
                 }
                 case WifiP2pDevice.UNAVAILABLE: {
@@ -101,7 +101,7 @@ public class WifiPeerListAdapter extends ArrayAdapter<WifiP2pDevice> {
                 }
                 case WifiP2pDevice.FAILED: {
                     // attempting to connect
-                    //mWifiBroadcaster.connectToADevice(device, null);
+                    mWifiBroadcaster.connectToADevice(device, null);
                     break;
                 }
             }

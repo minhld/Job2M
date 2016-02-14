@@ -127,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        deviceListAdapter = new WifiPeerListAdapter(this, R.layout.row_devices);
+        deviceListAdapter = new WifiPeerListAdapter(this, R.layout.row_devices,
+                                    jobHandler.getConnector());
         deviceList.setAdapter(deviceListAdapter);
 
         sayHiBtn.setOnClickListener(new View.OnClickListener() {

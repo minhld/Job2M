@@ -27,6 +27,10 @@ public class JobHandler {
     JobServerHandler serverHandler;
 
     WifiBroadcaster mReceiver;
+    public WifiBroadcaster getConnector() {
+        return this.mReceiver;
+    }
+
     IntentFilter mIntentFilter;
 
 
@@ -84,8 +88,8 @@ public class JobHandler {
         } catch(Exception e) { }
 
         // start dispatching jobs after decision maker select the available peers
-        new JobDispatcher(context, mReceiver, serverHandler, dataParser,
-                                useCluster, dataPath, jobPath).execute();
+        //new JobDispatcher(context, mReceiver, serverHandler, dataParser,
+        //                        useCluster, dataPath, jobPath).execute();
     }
 
     /**
@@ -121,11 +125,11 @@ public class JobHandler {
 
             // if current device is client, it will auto connect through
             // the list of devices
-            for (WifiP2pDevice device : deviceList) {
-                if (device.status == Utils.WiFiDirectStatus.AVAILABLE) {
-                    mReceiver.connectToADevice(device, null);
-                }
-            }
+//            for (WifiP2pDevice device : deviceList) {
+//                if (device.status == Utils.WiFiDirectStatus.AVAILABLE) {
+//                    mReceiver.connectToADevice(device, null);
+//                }
+//            }
         }
 
         @Override

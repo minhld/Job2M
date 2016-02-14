@@ -12,12 +12,14 @@ import java.io.Serializable;
  */
 public class JobData implements Serializable {
     public int index;
+    public byte jobType;
     // this is an another representation of bitmapData in binary data
     public byte[] byteData;
     public byte[] jobClass;
 
     public JobData() {
         this.index = 0;
+        this.jobType = Utils.JOB_TYPE_ORG;
         this.byteData = new byte[0];
         this.jobClass = new byte[0];
     }
@@ -26,17 +28,24 @@ public class JobData implements Serializable {
      * this constructor is used
      *
      * @param index
-     * @param bmpData
+     * @param byteData
      * @param jobClassBytes
      */
-    public JobData(int index, byte[] bmpData, byte[] jobClassBytes) {
+    public JobData(int index, byte[] byteData, byte[] jobClassBytes) {
         this.index = index;
-        this.byteData = bmpData;
+        this.jobType = Utils.JOB_TYPE_ORG;
+        this.byteData = byteData;
         this.jobClass = jobClassBytes;
+    }
+
+    public JobData(int index, byte jobType, byte[] byteData, byte[] jobClassBytes) {
+        this(index, byteData, jobClassBytes);
+        this.jobType = jobType;
     }
 
     public JobData(int index, byte[] byteData, File jobClassFile) {
         this.index = index;
+        this.jobType = Utils.JOB_TYPE_ORG;
 
         // assign the binary data
         this.byteData = byteData;
@@ -47,6 +56,11 @@ public class JobData implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public JobData(int index, byte jobType, byte[] byteData, File jobClassFile) {
+        this(index, byteData, jobClassFile);
+        this.jobType = jobType;
     }
 
     /**

@@ -34,28 +34,28 @@ public class JobServerHandler extends Handler {
                 // client received job or ACK, will send the result here
                 ByteArrayOutputStream readBuf = (ByteArrayOutputStream) msg.obj;
 
-                // check if the message is ACK
-                if (readBuf.size() < Utils.MAX_ACK_SIZE) {
-                    // get specs
-                    JobData ackJobData = Utils.convert2JobData(readBuf.toByteArray());
+                JobData jobData = Utils.convert2JobData(readBuf.toByteArray());
 
+                // check if the message is ACK
+                if (jobData.jobType == Utils.JOB_TYPE_ACK) {
                     // get specification info
-                    String specsJSON = PeerSpecs.getMyJSONSpecs(this.parent, ackJobData.index);
+                    String specsJSON = PeerSpecs.getMyJSONSpecs(this.parent, jobData.index);
 
                     // makeup ACK with index and return
-                    this.clientHandler.getBroadcaster().sendObject(
-                            new JobData(ackJobData.index, specsJSON.getBytes(), new byte[0]).toByteArray(),
-                            ackJobData.index);
+                    JobData ackRes = new JobData(jobData.index, Utils.JOB_TYPE_ACK,
+                                            specsJSON.getBytes(), new byte[0]);
+                    this.clientHandler.getBroadcaster().sendObject(ackRes.toByteArray(), jobData.index);
 
                     // send message out
                     this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] ACK received. answer now").sendToTarget();
-                } else {
+
+                } else if (jobData.jobType == Utils.JOB_TYPE_ORG){
                     // if message is job request
                     // print out that it received a job from server
                     this.mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[client] received a job from server. executing...").sendToTarget();
 
                     // run the job, result will be thrown to client executor handler
-                    new Thread(new JobExecutor(parent, clientHandler, dataParser, readBuf)).start();
+                    new Thread(new JobExecutor(parent, clientHandler, dataParser, jobData)).start();
                 }
                 break;
             }
@@ -74,11 +74,20 @@ public class JobServerHandler extends Handler {
                         clientJobResult = (JobData) Utils.deserialize(readBuf.toByteArray());
                     }
 
-                    dataParser.copyPartToPlaceholder(finalObject, clientJobResult.byteData, clientJobResult.index);
 
-                    // also display it partially
-                    mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[server] received data from client [" + clientJobResult.index + "]").sendToTarget();
-                    mainUiHandler.obtainMessage(Utils.MAIN_JOB_DONE, finalObject).sendToTarget();
+                    if (clientJobResult.jobType == Utils.JOB_TYPE_ACK) {
+                        // if the job data is ACK type, parse the ACK
+                        String ackSignal = new String(clientJobResult.byteData);
+
+                    } else if (clientJobResult.jobType == Utils.JOB_TYPE_ORG) {
+                        // if the job data received is original job object
+
+                        dataParser.copyPartToPlaceholder(finalObject, clientJobResult.byteData, clientJobResult.index);
+
+                        // also display it partially
+                        mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[server] received data from client [" + clientJobResult.index + "]").sendToTarget();
+                        mainUiHandler.obtainMessage(Utils.MAIN_JOB_DONE, finalObject).sendToTarget();
+                    }
                 } catch (Exception e) {
                     mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[server-error] " + e.getMessage()).sendToTarget();
                 }
