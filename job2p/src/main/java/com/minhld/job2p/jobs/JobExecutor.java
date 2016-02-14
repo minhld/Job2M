@@ -6,6 +6,9 @@ import android.os.Handler;
 import com.minhld.job2p.supports.Utils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOError;
+import java.io.IOException;
 
 /**
  * Created by minhld on 11/3/2015.
@@ -33,9 +36,9 @@ public class JobExecutor extends ClassLoader implements Runnable {
 
         try {
             this.jobData = (JobData) Utils.deserialize(jobDataBytes.toByteArray());
+
             // save the job class to Download folder
-            String outputJobFilePath = Utils.getDownloadPath() + "/" + Utils.JOB_FILE_NAME;
-            Utils.writeFile(outputJobFilePath, this.jobData.jobClass);
+            saveJobFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,6 +59,12 @@ public class JobExecutor extends ClassLoader implements Runnable {
         this.handler = handler;
         this.dataParser = dataParser;
         this.jobData = jobData;
+
+        try {
+            saveJobFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -99,4 +108,16 @@ public class JobExecutor extends ClassLoader implements Runnable {
 
     }
 
+    /**
+     * store job data to a local file
+     *
+     * @throws IOException
+     */
+    private void saveJobFile() throws IOException {
+        String outputJobFilePath = Utils.getDownloadPath() + "/" + Utils.JOB_FILE_NAME;
+
+        if (!new File(outputJobFilePath).exists()) {
+            Utils.writeFile(outputJobFilePath, this.jobData.jobClass);
+        }
+    }
 }
