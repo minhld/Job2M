@@ -39,7 +39,7 @@ public class JobServerHandler extends Handler {
                 // check if the message is ACK
                 if (jobData.jobType == Utils.JOB_TYPE_ACK) {
                     // get specification info
-                    String specsJSON = PeerSpecs.getMyJSONSpecs(this.parent, jobData.index);
+                    String specsJSON = PeerSpecs.getMyJSONSpecs(this.parent, "");
 
                     // makeup ACK with index and return
                     JobData ackRes = new JobData(jobData.index, Utils.JOB_TYPE_ACK,

@@ -23,26 +23,32 @@ public class ACKExchanger extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] params) {
-        try {
-            int deviceNum = Utils.connectedDevices.size() + 1;
+        while (true) {
+            try {
+                int deviceNum = Utils.connectedDevices.size() + 1;
 
-            JobData jobData;
-            for (int i = 1; i < deviceNum; i++) {
-                jobData = new JobData(i, Utils.JOB_TYPE_ACK, Utils.MSG_ACK.getBytes(), new byte[0]);
+                JobData jobData;
+                for (int i = 1; i < deviceNum; i++) {
+                    jobData = new JobData(i, Utils.JOB_TYPE_ACK, Utils.MSG_ACK.getBytes(), new byte[0]);
 
-                byte[] jobBytes = jobData.toByteArray();
-                this.broadcaster.sendObject(jobBytes, i);
+                    byte[] jobBytes = jobData.toByteArray();
+                    this.broadcaster.sendObject(jobBytes, i);
+                }
+
+                publishProgress();
+
+                // wait for a while before exchanging a new loop
+                Thread.sleep(Utils.ACK_WAIT);
+
+            } catch (Exception e) {
+                socketHandler.obtainMessage(Utils.JOB_FAILED, "[server] " + e.getMessage());
             }
-
-            publishProgress();
-        } catch (Exception e) {
-            socketHandler.obtainMessage(Utils.JOB_FAILED, "[server] " + e.getMessage());
         }
-        return null;
     }
 
     @Override
     protected void onProgressUpdate(Object[] values) {
-        // when all the ACK has been dispatched
+        // when one loop of sending ACK finished
+        // do nothing
     }
 }

@@ -28,12 +28,12 @@ public class PeerSpecs {
     public String availability;
     public float RL;
 
-    public static String getMyJSONSpecs(Context c, int index) {
+    public static String getMyJSONSpecs(Context c, String deviceName) {
         PeerSpecs ps = getMySpecs(c);
         JSONObject jsonSpecs = new JSONObject();
         try {
             // general information
-            jsonSpecs.put("device", index);
+            jsonSpecs.put("device", deviceName);
             jsonSpecs.put("RL", ps.RL);
             jsonSpecs.put("availability", ps.availability);
             jsonSpecs.put("network", "on");

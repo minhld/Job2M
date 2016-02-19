@@ -22,6 +22,7 @@ import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import dalvik.system.DexClassLoader;
 
@@ -53,6 +54,8 @@ public class Utils {
         public static final int UNAVAILABLE = 4;
     }
 
+    public static final int ACK_WAIT = 20000;
+
     public static final int MAIN_JOB_DONE = 1;
     public static final int MAIN_INFO = -1;
 
@@ -72,12 +75,17 @@ public class Utils {
     public static class XDevice {
         public String address;
         public String name;
+        public PeerSpecs specs;
 
         public XDevice () {}
 
         public XDevice (String address, String name) {
             this.address = address;
             this.name = name;
+        }
+
+        public void setSpecs(String jsonSpecs) {
+            // add peer specs to device
         }
     }
 
@@ -87,7 +95,7 @@ public class Utils {
      * list of connected client devices that currently connect to current server<br>
      * this list will be used as iterating devices for sending, checking, etc...
      */
-    public static ArrayList<XDevice> connectedDevices = new ArrayList<>();
+    public static Map<String, XDevice> connectedDevices = new HashMap<>();
 
     /**
      * this function converts a binary array into an instance of JobData,

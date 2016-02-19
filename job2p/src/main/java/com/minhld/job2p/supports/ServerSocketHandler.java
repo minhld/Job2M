@@ -5,6 +5,7 @@ import android.os.Handler;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +29,7 @@ public class ServerSocketHandler extends SocketHandler {
     public ServerSocketHandler(Handler handler) throws IOException {
         super(handler);
         chatList = new ArrayList<>();
-        Utils.connectedDevices = new ArrayList<>();
+        Utils.connectedDevices = new HashMap<>();
 
         try {
             socket = new ServerSocket(Utils.SERVER_PORT);
@@ -51,7 +52,7 @@ public class ServerSocketHandler extends SocketHandler {
                 ChatManager chat = new ChatManager(Utils.SocketType.SERVER, socket.accept(), handler);
                 pool.execute(chat);
                 chatList.add(chat);
-                Utils.connectedDevices.add(new Utils.XDevice());
+                Utils.connectedDevices.put("", new Utils.XDevice());
 
                 writeLog("[server] launching I/O handler");
             } catch (IOException e) {
