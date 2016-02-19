@@ -89,13 +89,16 @@ public class Utils {
         }
     }
 
-    public static HashMap<String, String> configs = new HashMap<>();
-
     /**
      * list of connected client devices that currently connect to current server<br>
      * this list will be used as iterating devices for sending, checking, etc...
      */
     public static Map<String, XDevice> connectedDevices = new HashMap<>();
+
+    /**
+     * list of configuration options
+     */
+    public static HashMap<String, String> configs = new HashMap<>();
 
     /**
      * this function converts a binary array into an instance of JobData,

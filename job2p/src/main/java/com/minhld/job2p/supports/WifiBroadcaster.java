@@ -61,10 +61,13 @@ public class WifiBroadcaster extends BroadcastReceiver {
                 @Override
                 public void onPeersAvailable(WifiP2pDeviceList peers) {
                     Collection<WifiP2pDevice> deviceList = peers.getDeviceList();
-                    writeLog(deviceList.size() + " devices was found");
+                    reloadDeviceList(deviceList);
+
                     if (broadCastListener != null){
                         broadCastListener.peerDeviceListUpdated(deviceList);
                     }
+
+                    writeLog(deviceList.size() + " devices was found");
                 }
             });
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
@@ -274,4 +277,21 @@ public class WifiBroadcaster extends BroadcastReceiver {
         mSocketUIListener.obtainMessage(Utils.MESSAGE_INFO, outMsg).sendToTarget();
     }
 
+    /**
+     * re-add the whole list of devices
+     *
+     * @param devices
+     */
+    private void reloadDeviceList(Collection<WifiP2pDevice> devices) {
+        Utils.connectedDevices.clear();
+
+        Utils.XDevice xDev = null;
+        for (WifiP2pDevice device : devices) {
+            // only try the CONNECTED devices
+            if (device.status == WifiP2pDevice.CONNECTED) {
+                xDev = new Utils.XDevice(device.deviceAddress, device.deviceName);
+                Utils.connectedDevices.put(device.deviceName, xDev);
+            }
+        }
+    }
 }
