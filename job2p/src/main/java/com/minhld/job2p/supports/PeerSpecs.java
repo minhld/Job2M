@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import android.os.Build;
 
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -25,36 +27,78 @@ public class PeerSpecs {
     public float batTotal;
     public float batUsage;
 
+    public String deviceName;
     public String availability;
     public float RL;
+    public String network;
+    public String gps;
+
+    public static PeerSpecs getPeerSpecsFromJSON(String jsonData) {
+        PeerSpecs ps = new PeerSpecs();
+
+        try {
+            JsonObject jsonObj = new JsonParser().parse(jsonData).getAsJsonObject();
+            // basic information
+            ps.deviceName = jsonObj.get("device").getAsString();
+            ps.availability = jsonObj.get("availability").getAsString();
+            ps.RL = jsonObj.get("RL").getAsFloat();
+            ps.network = jsonObj.get("network").getAsString();
+            ps.gps = jsonObj.get("gps").getAsString();
+
+            // cpu
+            JsonObject cpuAll = jsonObj.getAsJsonObject("cpu");
+            ps.cpuCoreNum = cpuAll.get("cores").getAsInt();
+            ps.cpuSpeed = cpuAll.get("speed").getAsFloat();
+            ps.cpuUsage = cpuAll.get("usage").getAsFloat();
+
+            // memory
+            JsonObject memAll = jsonObj.getAsJsonObject("memory");
+            ps.memTotal = memAll.get("total").getAsInt();
+            ps.memUsage = memAll.get("usage").getAsFloat();
+
+            // battery
+            JsonObject battAll = jsonObj.getAsJsonObject("battery");
+            ps.batTotal = battAll.get("total").getAsFloat();
+            ps.batUsage = battAll.get("usage").getAsFloat();
+
+        } catch (Exception e) {
+
+        }
+
+        return ps;
+    }
 
     public static String getMyJSONSpecs(Context c, String deviceName) {
         PeerSpecs ps = getMySpecs(c);
-        JSONObject jsonSpecs = new JSONObject();
+        JsonObject jsonSpecs = new JsonObject();
+//        JSONObject jsonSpecs = new JSONObject();
         try {
             // general information
-            jsonSpecs.put("device", deviceName);
-            jsonSpecs.put("RL", ps.RL);
-            jsonSpecs.put("availability", ps.availability);
-            jsonSpecs.put("network", "on");
-            jsonSpecs.put("gps", "off");
+            if (deviceName.equals("")) {
+                deviceName = Build.MODEL;
+            }
+            jsonSpecs.addProperty("device", deviceName);
+            jsonSpecs.addProperty("RL", ps.RL);
+            jsonSpecs.addProperty("availability", ps.availability);
+            jsonSpecs.addProperty("network", "on");
+            jsonSpecs.addProperty("gps", "off");
 
             // specific data
-            JSONObject jsonCPU = new JSONObject();
-            jsonCPU.put("usage", ps.cpuUsage);
-            jsonCPU.put("speed", ps.cpuSpeed);
-            jsonCPU.put("cores", ps.cpuCoreNum);
-            jsonSpecs.put("cpu", jsonCPU);
+            JsonObject jsonCPU = new JsonObject();
+            jsonCPU.addProperty("usage", ps.cpuUsage);
+            jsonCPU.addProperty("speed", ps.cpuSpeed);
+            jsonCPU.addProperty("cores", ps.cpuCoreNum);
+            jsonSpecs.add("cpu", jsonCPU);
 
-            JSONObject jsonMem = new JSONObject();
-            jsonMem.put("usage", ps.memUsage);
-            jsonMem.put("total", ps.memTotal);
-            jsonSpecs.put("memory", jsonMem);
+            JsonObject jsonMem = new JsonObject();
+            jsonMem.addProperty("usage", ps.memUsage);
+            jsonMem.addProperty("total", ps.memTotal);
+            jsonSpecs.add("memory", jsonMem);
 
-            JSONObject jsonBattery = new JSONObject();
-            jsonBattery.put("usage", ps.batUsage);
-            jsonBattery.put("total", ps.batTotal);
-            jsonSpecs.put("battery", jsonBattery);
+            JsonObject jsonBattery = new JsonObject();
+            jsonBattery.addProperty("usage", ps.batUsage);
+            jsonBattery.addProperty("total", ps.batTotal);
+            jsonSpecs.add("battery", jsonBattery);
 
             return jsonSpecs.toString();
         } catch (Exception e) {

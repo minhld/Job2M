@@ -293,5 +293,10 @@ public class WifiBroadcaster extends BroadcastReceiver {
                 Utils.connectedDevices.put(device.deviceName, xDev);
             }
         }
+
+        // exchange ACKs between the devices to get device status to support
+        // decision maker to select available peers
+        ACKExchanger exchanger = new ACKExchanger(this);
+        exchanger.execute();
     }
 }
