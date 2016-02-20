@@ -79,6 +79,7 @@ public class JobServerHandler extends Handler {
                         // if the job data is ACK type, parse the ACK
                         mainUiHandler.obtainMessage(Utils.MAIN_INFO, "[server] received ACK from client [" + clientJobResult.index + "]").sendToTarget();
                         String ackSignal = new String(clientJobResult.byteData);
+                        Utils.updateXDevice(ackSignal);
 
                     } else if (clientJobResult.jobType == Utils.JOB_TYPE_ORG) {
                         // if the job data received is original job object

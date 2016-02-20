@@ -24,10 +24,10 @@ public class ACKExchanger extends AsyncTask {
     @Override
     protected Object doInBackground(Object[] params) {
         try {
-            int deviceNum = Utils.connectedDevices.size() + 1;
+            int deviceNum = Utils.connectedDevices.size();
 
             JobData jobData;
-            for (int i = 1; i < deviceNum; i++) {
+            for (int i = 0; i < deviceNum; i++) {
                 jobData = new JobData(i, Utils.JOB_TYPE_ACK, Utils.MSG_ACK.getBytes(), new byte[0]);
 
                 byte[] jobBytes = jobData.toByteArray();

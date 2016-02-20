@@ -84,8 +84,15 @@ public class Utils {
             this.name = name;
         }
 
+        /**
+         * this function convert a json string into peer specs object
+         * and add to the X-Device object
+         *
+         * @param jsonSpecs
+         */
         public void setSpecs(String jsonSpecs) {
             // add peer specs to device
+            this.specs = PeerSpecs.getPeerSpecsFromJSON(jsonSpecs);
         }
     }
 
@@ -99,6 +106,19 @@ public class Utils {
      * list of configuration options
      */
     public static HashMap<String, String> configs = new HashMap<>();
+
+    /**
+     * this function updates JSON data to one of the device in the list.
+     * the json data already contains information about the device name
+     *
+     * @param jsonData
+     */
+    public static void updateXDevice(String jsonData) {
+        PeerSpecs ps = PeerSpecs.getPeerSpecsFromJSON(jsonData);
+        XDevice xDev = connectedDevices.get(ps.deviceName);
+        xDev.specs = ps;
+        connectedDevices.put(ps.deviceName, xDev);
+    }
 
     /**
      * this function converts a binary array into an instance of JobData,
