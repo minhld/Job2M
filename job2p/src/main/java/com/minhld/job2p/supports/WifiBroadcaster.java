@@ -86,7 +86,8 @@ public class WifiBroadcaster extends BroadcastReceiver {
                             try {
                                 mSocketHandler = new ServerSocketHandler(mSocketUIListener);
                                 mSocketHandler.start();
-                                writeLog("become server @ " + info.groupOwnerAddress.getHostAddress());
+                                writeLog("become server @ " + info.groupOwnerAddress.getHostAddress() +
+                                        " port: " + Utils.SERVER_PORT);
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 writeLog("[wifi] error: " + e.getMessage());
