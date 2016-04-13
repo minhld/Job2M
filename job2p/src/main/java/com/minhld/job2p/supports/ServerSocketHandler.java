@@ -79,11 +79,15 @@ public class ServerSocketHandler extends SocketHandler {
 
     @Override
     public void write(byte[] data, int channelIndex) {
+        long startTime = System.currentTimeMillis();
 
         // send data to each client
         if (channelIndex > 0 && channelIndex - 1 < chatList.size()) {
             chatList.get(channelIndex - 1).write(data);
         }
+
+        long writeDuration = System.currentTimeMillis() - startTime;
+        writeLog("sending time to #" + channelIndex + ": " + writeDuration + "ms");
     }
 
     @Override

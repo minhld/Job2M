@@ -3,6 +3,7 @@ package com.minhld.job2p.supports;
 import android.content.Context;
 import android.os.Environment;
 
+import com.minhld.job2p.jobs.Job;
 import com.minhld.job2p.jobs.JobData;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -170,21 +171,25 @@ public class Utils {
      * @throws Exception
      */
     public static Object runRemote(Context c, String jobPath, Object srcObject, Class type) throws Exception {
-        // check if the files are valid or not
-        if (!new File(jobPath).exists()) {
-            throw new Exception("job or data file does not exist");
-        }
+//        // check if the files are valid or not
+//        if (!new File(jobPath).exists()) {
+//            throw new Exception("job or data file does not exist");
+//        }
+//
+//        // address the class object and its executable method
+//        String dex_dir = c.getDir("dex", 0).getAbsolutePath();
+//        ClassLoader parent  = c.getClass().getClassLoader();
+//        DexClassLoader loader = new DexClassLoader(jobPath, dex_dir, null, parent);
+//        Class jobClass = loader.loadClass(JOB_CLASS_NAME);
+//        Object o = jobClass.newInstance();
+//        Method m = jobClass.getMethod(JOB_EXEC_METHOD, type);
+//
+//        // address the resource
+//        return m.invoke(o, srcObject);
+        // this is urgent case so that we wont use DexClassLoader
 
-        // address the class object and its executable method
-        String dex_dir = c.getDir("dex", 0).getAbsolutePath();
-        ClassLoader parent  = c.getClass().getClassLoader();
-        DexClassLoader loader = new DexClassLoader(jobPath, dex_dir, null, parent);
-        Class jobClass = loader.loadClass(JOB_CLASS_NAME);
-        Object o = jobClass.newInstance();
-        Method m = jobClass.getMethod(JOB_EXEC_METHOD, type);
-
-        // address the resource
-        return m.invoke(o, srcObject);
+        // we will use Job object directly
+        return new Job().exec(srcObject);
     }
 
     /**

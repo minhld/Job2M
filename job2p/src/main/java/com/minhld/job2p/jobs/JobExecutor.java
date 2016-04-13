@@ -69,6 +69,8 @@ public class JobExecutor extends ClassLoader implements Runnable {
 
     @Override
     public void run() {
+        long startRunningTime = System.currentTimeMillis();
+
         Object orgObj = null;
         Object resObj = null;
         try {
@@ -90,6 +92,11 @@ public class JobExecutor extends ClassLoader implements Runnable {
             // release the result data
             dataParser.destroy(orgObj);
 
+            // print out running time
+            long runningTime = System.currentTimeMillis() - startRunningTime;
+            handler.obtainMessage(Utils.MESSAGE_INFO, "running time (#" + jobData.index + "): " + runningTime).sendToTarget();
+
+            // send result back to caller
             handler.obtainMessage(Utils.JOB_OK, jobResult).sendToTarget();
 
         } catch (Exception e) {

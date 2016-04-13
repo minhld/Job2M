@@ -44,15 +44,22 @@ public class ChatManager implements Runnable {
 
             int readCount = 0, totalCount = 0;
             int length = 0;
+            long startRecevingDataTime = 0, receiveDuration = 0;
 
             try {
                 while (true) {
+                    // restart the counter
+                    startRecevingDataTime = 0;
 
                     byteStream = new ByteArrayOutputStream();
                     length = 0;
                     totalCount = 0;
                     // read from the input stream
                     while ((readCount = iStream.read(buffer)) >= 0) {
+                        // get start receiving data time
+                        if (startRecevingDataTime == 0) {
+                            startRecevingDataTime = System.currentTimeMillis();
+                        }
 
                         if (length > 0) {
                             byteStream.write(buffer, 0, readCount);
@@ -81,13 +88,16 @@ public class ChatManager implements Runnable {
                         throw new IOException("socket should be disconnected");
                     }
 
+                    // print out the receive time
+                    receiveDuration = System.currentTimeMillis() - startRecevingDataTime;
+                    handler.obtainMessage(Utils.MESSAGE_INFO, "receive time: " + receiveDuration + "ms").sendToTarget();
+
                     // Send the obtained bytes to the UI Activity
                     if (socketType == Utils.SocketType.SERVER) {
                         handler.obtainMessage(Utils.MESSAGE_READ_SERVER, byteStream).sendToTarget();
                     } else {
                         handler.obtainMessage(Utils.MESSAGE_READ_CLIENT, byteStream).sendToTarget();
                     }
-
                 }
             } catch (IOException e) {
                 length = 0;

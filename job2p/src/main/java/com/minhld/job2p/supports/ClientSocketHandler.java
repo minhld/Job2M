@@ -49,7 +49,12 @@ public class ClientSocketHandler extends SocketHandler {
 
     @Override
     public void write(byte[] data, int channelIndex) {
+        long startTime = System.currentTimeMillis();
+
         chat.write(data);
+
+        long writeDuration = System.currentTimeMillis() - startTime;
+        writeLog("sending time (from #" + channelIndex + " to caller): " + writeDuration + "ms");
     }
 
     @Override

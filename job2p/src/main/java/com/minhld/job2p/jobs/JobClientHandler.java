@@ -52,6 +52,9 @@ public class JobClientHandler extends Handler {
                 // send some error data
                 break;
             }
+            case Utils.MESSAGE_INFO: {
+                mainUiHandler.obtainMessage(Utils.MAIN_INFO, (String) msg.obj).sendToTarget();
+            }
         }
     }
 }

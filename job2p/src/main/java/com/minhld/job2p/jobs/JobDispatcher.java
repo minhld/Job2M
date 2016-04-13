@@ -74,7 +74,7 @@ public class JobDispatcher extends AsyncTask {
                             // dispatch this one to client to resolve it
                             byte[] jobBytes = jobData.toByteArray();
                             this.socketHandler.obtainMessage(Utils.MESSAGE_INFO, "[server] sending the job #" + i +
-                                    " (" + jobBytes.length + "bytes)").sendToTarget();
+                                    " (" + jobBytes.length + " bytes)").sendToTarget();
                             this.broadcaster.sendObject(jobBytes, i);
                         }
                     } else {
