@@ -123,6 +123,9 @@ public class JobExecutor extends ClassLoader implements Runnable {
     private void saveJobFile() throws IOException {
         String outputJobFilePath = Utils.getDownloadPath() + "/" + Utils.JOB_FILE_NAME;
 
+        // grant permission - for android from v6.0
+        Utils.grandWritePermission(this.context);
+
         if (!new File(outputJobFilePath).exists()) {
             Utils.writeFile(outputJobFilePath, this.jobData.jobClass);
         }

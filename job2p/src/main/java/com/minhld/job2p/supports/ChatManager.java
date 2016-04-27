@@ -44,12 +44,12 @@ public class ChatManager implements Runnable {
 
             int readCount = 0, totalCount = 0;
             int length = 0;
-            long startRecevingDataTime = 0, receiveDuration = 0;
+            long startReceivingDataTime = 0, receiveDuration = 0;
 
             try {
                 while (true) {
                     // restart the counter
-                    startRecevingDataTime = 0;
+                    startReceivingDataTime = 0;
 
                     byteStream = new ByteArrayOutputStream();
                     length = 0;
@@ -57,8 +57,8 @@ public class ChatManager implements Runnable {
                     // read from the input stream
                     while ((readCount = iStream.read(buffer)) >= 0) {
                         // get start receiving data time
-                        if (startRecevingDataTime == 0) {
-                            startRecevingDataTime = System.currentTimeMillis();
+                        if (startReceivingDataTime == 0) {
+                            startReceivingDataTime = System.currentTimeMillis();
                         }
 
                         if (length > 0) {
@@ -89,7 +89,7 @@ public class ChatManager implements Runnable {
                     }
 
                     // print out the receive time
-                    receiveDuration = System.currentTimeMillis() - startRecevingDataTime;
+                    receiveDuration = System.currentTimeMillis() - startReceivingDataTime;
                     handler.obtainMessage(Utils.MESSAGE_INFO, "receive time: " + receiveDuration + "ms").sendToTarget();
 
                     // Send the obtained bytes to the UI Activity

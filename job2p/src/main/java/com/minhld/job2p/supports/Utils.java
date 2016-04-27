@@ -1,7 +1,12 @@
 package com.minhld.job2p.supports;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 
 import com.minhld.job2p.jobs.Job;
 import com.minhld.job2p.jobs.JobData;
@@ -54,6 +59,12 @@ public class Utils {
         public static final int INVITED = 1;
         public static final int UNAVAILABLE = 4;
     }
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     public static final int ACK_WAIT = 20000;
 
@@ -200,10 +211,23 @@ public class Utils {
      * @throws IOException
      */
     public static void writeFile(String outputFilePath, byte[] data) throws IOException {
+
         FileOutputStream fos = new FileOutputStream(outputFilePath);
         fos.write(data, 0, data.length);
         fos.flush();
         fos.close();
+    }
+
+    public static void grandWritePermission(Activity activity) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            int permission = ActivityCompat.checkSelfPermission(activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // We don't have permission so prompt the user
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+            }
+        }
     }
 
     /**
